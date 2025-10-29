@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo de Gestión de Ingresos y Egresos</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Navegación -->
+        <nav class="navbar">
+            <h1>💰 Control de Flujo de Caja</h1>
+            <div class="nav-buttons">
+                <button class="nav-btn active" data-view="dashboard">Dashboard</button>
+                <button class="nav-btn" data-view="registro">Registrar Transacción</button>
+                <button class="nav-btn" data-view="alertas">Alertas</button>
+            </div>
+        </nav>
+
+        <!-- Dashboard -->
+        <section id="dashboard" class="view active">
+            <h2>📊 Dashboard - Resumen Mensual</h2>
+
+            <div class="filter-section">
+                <label for="cuenta-filter">Cuenta:</label>
+                <select id="cuenta-filter">
+                    <option value="todas">Todas las Cuentas</option>
+                    <option value="empresarial">Solo Empresarial</option>
+                    <option value="personal">Solo Personal</option>
+                </select>
+
+                <label for="mes-filter" style="margin-left: 20px;">Mes:</label>
+                <select id="mes-filter">
+                    <option value="2025-10">Octubre 2025</option>
+                    <option value="2025-09">Septiembre 2025</option>
+                    <option value="2025-08">Agosto 2025</option>
+                </select>
+            </div>
+
+            <div class="cards-container">
+                <div class="card card-ingreso">
+                    <h3>Ingresos Totales</h3>
+                    <p class="amount" id="total-ingresos">S/ 0.00</p>
+                    <small>Este mes</small>
+                </div>
+                <div class="card card-egreso">
+                    <h3>Egresos Totales</h3>
+                    <p class="amount" id="total-egresos">S/ 0.00</p>
+                    <small>Este mes</small>
+                </div>
+                <div class="card card-saldo">
+                    <h3>Saldo Neto</h3>
+                    <p class="amount" id="saldo-neto">S/ 0.00</p>
+                    <small>Ingresos - Egresos</small>
+                </div>
+            </div>
+
+            <div class="dashboard-grid">
+                <div class="chart-container">
+                    <h3>Desglose por Tipo</h3>
+                    <div class="bar-chart">
+                        <div class="bar-item">
+                            <span class="bar-label">Empresarial</span>
+                            <div class="bar-wrapper">
+                                <div class="bar bar-empresarial" style="width: 0%" id="bar-empresarial"></div>
+                            </div>
+                            <span class="bar-value" id="val-empresarial">S/ 0</span>
+                        </div>
+                        <div class="bar-item">
+                            <span class="bar-label">Personal</span>
+                            <div class="bar-wrapper">
+                                <div class="bar bar-personal" style="width: 0%" id="bar-personal"></div>
+                            </div>
+                            <span class="bar-value" id="val-personal">S/ 0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <h3>Últimas Transacciones</h3>
+                    <div class="transactions-list" id="recent-transactions">
+                        <p class="empty-state">No hay transacciones registradas</p>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <h3>Cuotas Pendientes</h3>
+                    <div class="cuotas-list" id="cuotas-pendientes">
+                        <p class="empty-state">No hay cuotas pendientes</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Registro de Transacciones -->
+        <section id="registro" class="view">
+            <h2>📝 Registrar Nueva Transacción</h2>
+
+            <form id="transaction-form" class="form-container">
+                <div class="form-group">
+                    <label for="tipo">Tipo de Transacción *</label>
+                    <select id="tipo" required>
+                        <option value="">Seleccionar...</option>
+                        <option value="ingreso">Ingreso (Venta/Cobro)</option>
+                        <option value="egreso">Egreso (Compra/Gasto/Pago)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="clasificacion">Clasificación *</label>
+                    <select id="clasificacion" required>
+                        <option value="">Seleccionar...</option>
+                        <option value="empresarial">Empresarial</option>
+                        <option value="personal">Personal</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="ruc">RUC Cliente/Proveedor</label>
+                        <input type="text" id="ruc" placeholder="20123456789" maxlength="11">
+                    </div>
+                    <div class="form-group">
+                        <label for="razon-social">Razón Social</label>
+                        <input type="text" id="razon-social" placeholder="Nombre o razón social">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="concepto">Concepto/Detalle *</label>
+                    <input type="text" id="concepto" placeholder="Descripción del producto o servicio" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="monto">Monto Total (S/) *</label>
+                        <input type="number" id="monto" step="0.01" placeholder="0.00" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="num-cuotas">Número de Cuotas</label>
+                        <input type="number" id="num-cuotas" min="1" value="1" placeholder="1">
+                        <small style="color: #666; font-size: 12px;">Si es en cuotas, ingrese el número total</small>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="fecha-vencimiento">Fecha 1ra Cuota/Pago *</label>
+                        <input type="date" id="fecha-vencimiento" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="frecuencia-cuotas">Frecuencia de Cuotas</label>
+                        <select id="frecuencia-cuotas">
+                            <option value="mensual">Mensual</option>
+                            <option value="quincenal">Quincenal</option>
+                            <option value="semanal">Semanal</option>
+                            <option value="personalizado">Personalizado</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="categoria">Categoría</label>
+                    <select id="categoria">
+                        <option value="">Seleccionar...</option>
+                        <option value="venta">Venta</option>
+                        <option value="servicio">Servicio</option>
+                        <option value="compra">Compra</option>
+                        <option value="servicio-basico">Servicio Básico (Luz, Agua, etc.)</option>
+                        <option value="planilla">Planilla</option>
+                        <option value="fraccionamiento">Fraccionamiento SUNAT</option>
+                        <option value="credito">Crédito</option>
+                        <option value="otros">Otros</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="fraccionamiento-group" style="display: none;">
+                    <label for="num-resolucion">Número de Resolución</label>
+                    <input type="text" id="num-resolucion" placeholder="Número de resolución SUNAT">
+                </div>
+
+                <div class="form-group">
+                    <label for="notas">Notas Adicionales</label>
+                    <textarea id="notas" rows="3" placeholder="Información adicional..."></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Guardar Transacción</button>
+                    <button type="reset" class="btn btn-secondary">Limpiar</button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Alertas -->
+        <section id="alertas" class="view">
+            <h2>🔔 Alertas y Pagos Pendientes</h2>
+
+            <div class="filter-section">
+                <label for="periodo-filter">Período:</label>
+                <select id="periodo-filter">
+                    <option value="proximos-3">Próximos 3 días</option>
+                    <option value="proximos-7">Próximos 7 días</option>
+                    <option value="quincena">Esta quincena</option>
+                    <option value="mes">Este mes</option>
+                </select>
+            </div>
+
+            <div class="alerts-container" id="alerts-list">
+                <p class="empty-state">No hay pagos pendientes en este período</p>
+            </div>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

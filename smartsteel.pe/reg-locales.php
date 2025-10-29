@@ -1,0 +1,144 @@
+<?php
+require("config/conexion.php");
+require("config/inicializar-datos.php");
+?>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <?php require("config/cabecera-web.php"); ?>
+    <!-- DataTables -->
+    <link href="assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+    <link href="assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+
+    <!-- Responsive datatable examples -->
+    <link href="assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+
+    <!-- Bootstrap Css -->
+    <link href="assets/css/bootstrap.min.css" id="bootstrap-style" rel="stylesheet" type="text/css" />
+    <!-- Icons Css -->
+    <link href="assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+    <!-- App Css-->
+    <link href="assets/css/app.min.css" id="app-style" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <form action="" name="fapps" id="fapps">
+                        <div class="mb-3 row">
+                            <label for="example-text-input" class="col-md-2 col-form-label">Punto de Venta</label>
+                            <div class="col-md-10">
+                                <input class="form-control" type="text" name="nombre_puntoventa" id="nombre_puntoventa">
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="example-text-input" class="col-md-2 col-form-label">Alias</label>
+                            <div class="col-md-10">
+                                <input class="form-control" type="text" name="alias" id="alias">
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="example-text-input" class="col-md-2 col-form-label">Direccion</label>
+                            <div class="col-md-10">
+                                <input class="form-control" type="text" name="direccion" id="direccion">
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="example-text-input" class="col-md-2 col-form-label">Telefono</label>
+                            <div class="col-md-10">
+                                <input class="form-control" type="text" name="telefono" id="telefono">
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="example-text-input" class="col-md-2 col-form-label">Email</label>
+                            <div class="col-md-10">
+                                <input class="form-control" type="text" name="email" id="email">
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label class="col-md-2 col-form-label">Estado</label>
+                            <div class="col-md-10">
+                                <input type="radio" name="estado" value="A" checked> Activo
+                                <input type="radio" name="estado" value="I"> Inactivo
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="exampleDataList" class="col-md-2 col-form-label"></label>
+                            <div class="col-md-10">
+                                <button type="button" class="btn btn-success waves-effect waves-light" id="benviar">
+                                    <i class="mdi mdi-content-save align-middle me-2"></i> REGISTRAR PUNTO VENTA
+                                </button>
+                                <input type="hidden" name="proceso" id="proceso">
+                                <input type="hidden" name="modulo" id="modulo">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div> <!-- end col -->
+    </div>
+    </p>
+    <!-- JAVASCRIPT -->
+    <script src="assets/libs/jquery/jquery.min.js"></script>
+    <script src="assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/libs/metismenu/metisMenu.min.js"></script>
+    <script src="assets/libs/simplebar/simplebar.min.js"></script>
+    <script src="assets/libs/node-waves/waves.min.js"></script>
+
+    <!-- apexcharts js -->
+    <script src="assets/libs/apexcharts/apexcharts.min.js"></script>
+
+    <!-- jquery.vectormap map -->
+    <script src="assets/libs/jqvmap/jquery.vmap.min.js"></script>
+    <script src="assets/libs/jqvmap/maps/jquery.vmap.usa.js"></script>
+
+    <script src="assets/js/pages/dashboard.init.js"></script>
+
+    <script src="assets/js/app.js"></script>
+    <script>
+        $(function() {
+            $("#benviar").click(function() {
+                if ($("#nombre_puntoventa").val() == '') {
+                    alert("Falta ingresar nombre del local");
+                    $("#nombre_puntoventa").focus();
+                    return false;
+                }
+                if ($("#alias").val() == '') {
+                    alert("Falta ingresar alias del local");
+                    $("#alias").focus();
+                    return false;
+                }
+                /*******************************************/
+                /*******************************************/
+                $("#proceso").val('RegistrarPuntoVenta');
+                $("#modulo").val('PuntoVenta');
+                var datosEnviar = $("#fapps").serialize();
+                $.ajax({
+                    data: datosEnviar,
+                    url: "config/proceso-guardar.php",
+                    type: "POST",
+                    dataType: "json",
+                    beforeSend: function() {
+                        $("#benviar").html("PROCESANDO...");
+                    },
+                    success: function(data) {
+                        var respuesta = data.respuesta;
+                        if (respuesta == 'SI') {
+                            alert("El punto de venta se registro con exito.");
+                            location.reload();
+                        } else {
+                            alert("Lo sentimos pero en nombre ya existe.");
+                        }
+                    }
+                })
+            })
+        })
+        /**************************************************/
+        /**************************************************/
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,590 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+}
+
+/* Navegación */
+.navbar {
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+    color: white;
+    padding: 20px 30px;
+}
+
+.navbar h1 {
+    margin-bottom: 15px;
+    font-size: 28px;
+}
+
+.nav-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.nav-btn {
+    padding: 10px 20px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    background: transparent;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 14px;
+}
+
+.nav-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.nav-btn.active {
+    background: white;
+    color: #2c3e50;
+    border-color: white;
+}
+
+/* Vistas */
+.view {
+    display: none;
+    padding: 30px;
+    animation: fadeIn 0.3s ease-in;
+}
+
+.view.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.view h2 {
+    color: #2c3e50;
+    margin-bottom: 25px;
+    font-size: 24px;
+    border-bottom: 3px solid #667eea;
+    padding-bottom: 10px;
+}
+
+/* Filtros */
+.filter-section {
+    margin-bottom: 25px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.filter-section label {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.filter-section select {
+    padding: 8px 15px;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+/* Cards del Dashboard */
+.cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.card {
+    padding: 25px;
+    border-radius: 10px;
+    color: white;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.card-ingreso {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+
+.card-egreso {
+    background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+}
+
+.card-saldo {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.card h3 {
+    font-size: 16px;
+    margin-bottom: 10px;
+    opacity: 0.9;
+}
+
+.card .amount {
+    font-size: 32px;
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+.card small {
+    opacity: 0.8;
+    font-size: 13px;
+}
+
+/* Dashboard Grid */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 25px;
+}
+
+.chart-container {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+.chart-container h3 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+    font-size: 18px;
+}
+
+/* Gráfico de Barras */
+.bar-chart {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.bar-item {
+    display: grid;
+    grid-template-columns: 100px 1fr 100px;
+    align-items: center;
+    gap: 10px;
+}
+
+.bar-label {
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 14px;
+}
+
+.bar-wrapper {
+    background: #e0e0e0;
+    border-radius: 10px;
+    height: 30px;
+    overflow: hidden;
+}
+
+.bar {
+    height: 100%;
+    border-radius: 10px;
+    transition: width 0.5s ease;
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+    color: white;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.bar-empresarial {
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+}
+
+.bar-personal {
+    background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
+}
+
+.bar-value {
+    text-align: right;
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 14px;
+}
+
+/* Lista de Transacciones */
+.transactions-list,
+.cuotas-list {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.cuota-item {
+    padding: 12px;
+    background: white;
+    border-left: 4px solid #667eea;
+    margin-bottom: 8px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.cuota-item.pagada {
+    opacity: 0.6;
+    border-left-color: #4caf50;
+}
+
+.cuota-item.proxima {
+    border-left-color: #ff9800;
+    background: #fff8e1;
+}
+
+.cuota-item.vencida {
+    border-left-color: #f44336;
+    background: #ffebee;
+}
+
+.cuota-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.cuota-numero {
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 13px;
+}
+
+.cuota-monto {
+    font-weight: bold;
+    font-size: 14px;
+    color: #667eea;
+}
+
+.cuota-fecha {
+    font-size: 12px;
+    color: #666;
+}
+
+.cuota-concepto {
+    font-size: 12px;
+    color: #888;
+    margin-top: 4px;
+}
+
+.cuota-actions {
+    margin-top: 8px;
+    display: flex;
+    gap: 8px;
+}
+
+.btn-cuota {
+    padding: 4px 10px;
+    font-size: 11px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-pagar {
+    background: #4caf50;
+    color: white;
+}
+
+.btn-pagar:hover {
+    background: #45a049;
+}
+
+.btn-ver {
+    background: #2196f3;
+    color: white;
+}
+
+.btn-ver:hover {
+    background: #0b7dda;
+}
+
+.transaction-item {
+    padding: 15px;
+    background: white;
+    border-left: 4px solid #667eea;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.transaction-item.egreso {
+    border-left-color: #eb3349;
+}
+
+.transaction-item.ingreso {
+    border-left-color: #11998e;
+}
+
+.transaction-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.transaction-concepto {
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 15px;
+}
+
+.transaction-monto {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.transaction-monto.ingreso {
+    color: #11998e;
+}
+
+.transaction-monto.egreso {
+    color: #eb3349;
+}
+
+.transaction-details {
+    font-size: 13px;
+    color: #666;
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.transaction-badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.badge-empresarial {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
+.badge-personal {
+    background: #fce4ec;
+    color: #c2185b;
+}
+
+/* Formulario */
+.form-container {
+    max-width: 800px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 14px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    transition: border-color 0.3s;
+    font-family: inherit;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.form-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.btn {
+    padding: 12px 30px;
+    border: none;
+    border-radius: 5px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.btn-secondary {
+    background: #e0e0e0;
+    color: #2c3e50;
+}
+
+.btn-secondary:hover {
+    background: #d0d0d0;
+}
+
+/* Alertas */
+.alerts-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.alert-item {
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    border-left: 5px solid #ffc107;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+.alert-item.urgente {
+    border-left-color: #f44336;
+    background: #ffebee;
+}
+
+.alert-item.proximo {
+    border-left-color: #ff9800;
+    background: #fff3e0;
+}
+
+.alert-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.alert-title {
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 16px;
+}
+
+.alert-date {
+    font-weight: bold;
+    color: #f44336;
+    font-size: 14px;
+}
+
+.alert-details {
+    color: #666;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.alert-monto {
+    font-weight: bold;
+    color: #2c3e50;
+    margin-top: 8px;
+    font-size: 18px;
+}
+
+/* Estado vacío */
+.empty-state {
+    text-align: center;
+    color: #999;
+    padding: 40px;
+    font-style: italic;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .container {
+        border-radius: 0;
+    }
+
+    .view {
+        padding: 20px;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .bar-item {
+        grid-template-columns: 80px 1fr 80px;
+    }
+
+    .cards-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Scrollbar personalizado */
+.transactions-list::-webkit-scrollbar,
+.cuotas-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.transactions-list::-webkit-scrollbar-track,
+.cuotas-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.transactions-list::-webkit-scrollbar-thumb,
+.cuotas-list::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+.transactions-list::-webkit-scrollbar-thumb:hover,
+.cuotas-list::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}

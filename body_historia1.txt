@@ -1,0 +1,13 @@
+Historia de Usuario:
+Como responsable de compliance, quiero ingresar el RUC en cada registro de transacción, para que el sistema consulte automáticamente la base de datos de empresas y complete la razón social, asegurando que el registro quede correctamente identificado y facilitando futuras integraciones con SUNAT u organismos externos. Solo si el ingreso o egreso es en cuenta personal, el campo de RUC y razón social puede quedar vacío.
+
+Criterios de Aceptación:
+### Scenario: Registro exitoso con RUC existente
+- Given que el usuario ingresa un RUC válido
+- When registra una nueva transacción
+- Then el sistema debe consultar la base de datos, mostrar automáticamente la razón social asociada y guardar el registro correctamente
+
+### Scenario: Registro con RUC inexistente
+- Given que el usuario ingresa un RUC que no existe en la base de datos
+- When intenta registrar una transacción
+- Then el sistema debe mostrar un mensaje indicando que el RUC no existe y bloquear el guardado del registro

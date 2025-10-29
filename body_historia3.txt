@@ -1,0 +1,13 @@
+Historia de Usuario:
+El sistema nunca debe mostrar datos ficticios; únicamente debe visualizar datos verdaderos existentes en la fuente real, y si no hay datos disponibles, no se muestra ningún ejemplo ni información dummy.
+
+Criterios de Aceptación:
+### Scenario: Visualización con datos reales
+- Given que existen transacciones cargadas en la fuente de datos real
+- When el usuario accede como nuevo usuario en cualquier dispositivo
+- Then el sistema muestra la información de esas transacciones con diseño responsive
+
+### Scenario: Visualización sin datos
+- Given que no existen transacciones cargadas en la fuente de datos real
+- When el usuario accede como nuevo usuario
+- Then el sistema no debe mostrar ninguna transacción de ejemplo ni información ficticia
