@@ -1,5 +1,5 @@
 <?php
-$conexion = mysqli_connect('localhost', 'roque192_Us5020x', 'RTE340lasd129X9', 'roque192_XXNEO2050');
+$conexion = mysqli_connect('localhost', 'root', '', 'smartsteel');
 if (mysqli_connect_errno()) {
     echo "Fallo la conexion MySQL " . mysqli_connect_error();
 }
