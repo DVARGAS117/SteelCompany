@@ -246,12 +246,12 @@ require("config/permisos.php");
                     // Mostrar campos de cuotas
                     $('#cuotas-row').show();
                     $('#fecha-pago-unico-row').hide();
-                    
+
                     // Habilitar campos de cuotas
                     $('#numero_cuotas').prop('disabled', false).val(2);
                     $('#frecuencia_cuotas').prop('disabled', false);
                     $('#fecha_primera_cuota').prop('disabled', false).prop('required', true);
-                    
+
                     // Ajustar el name y required del input de fecha
                     $('#fecha_primera_cuota').attr('name', 'fecha_primera_cuota');
                     $('#fecha_pago_unico').removeAttr('name').prop('required', false);
@@ -259,12 +259,12 @@ require("config/permisos.php");
                     // Ocultar campos de cuotas
                     $('#cuotas-row').hide();
                     $('#fecha-pago-unico-row').show();
-                    
+
                     // Deshabilitar campos de cuotas
                     $('#numero_cuotas').prop('disabled', true).val(1);
                     $('#frecuencia_cuotas').prop('disabled', true);
                     $('#fecha_primera_cuota').prop('disabled', true).prop('required', false);
-                    
+
                     // Ajustar el name y required del input de fecha
                     $('#fecha_pago_unico').attr('name', 'fecha_primera_cuota').prop('required', true);
                     $('#fecha_primera_cuota').removeAttr('name');
@@ -369,7 +369,7 @@ require("config/permisos.php");
                                 data = JSON.parse(jsonMatch[0]);
                             }
                         }
-                        
+
                         if (data.respuesta === 'SI') {
                             alert('Movimiento guardado exitosamente.');
                             location.reload();
