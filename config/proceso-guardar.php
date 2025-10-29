@@ -2715,8 +2715,8 @@ if ($modulo == 'MovimientosFinancieros') {
         $razon_social = $_POST['razon_social'];
         $concepto = $_POST['concepto'];
         $monto_total = $_POST['monto_total'];
-        $numero_cuotas = $_POST['numero_cuotas'];
-        $frecuencia_cuotas = $_POST['frecuencia_cuotas'];
+        $numero_cuotas = isset($_POST['numero_cuotas']) && $_POST['numero_cuotas'] !== '' ? $_POST['numero_cuotas'] : 1;
+        $frecuencia_cuotas = isset($_POST['frecuencia_cuotas']) && $_POST['frecuencia_cuotas'] !== '' ? $_POST['frecuencia_cuotas'] : 'UNICO';
         $fecha_primera_cuota = $_POST['fecha_primera_cuota'];
         $categoria = $_POST['categoria'];
         $numero_resolucion = $_POST['numero_resolucion'];
@@ -2746,9 +2746,9 @@ if ($modulo == 'MovimientosFinancieros') {
 
                 for ($i = 1; $i <= $numero_cuotas; $i++) {
                     $sqlCuota = "INSERT INTO cuotas_movimientos (
-                        id_movimiento, numero_cuota, monto_cuota, fecha_vencimiento, estado
+                        id_movimiento, numero_cuota, monto_cuota, fecha_vencimiento, estado, fecha_creacion, cod_personal
                     ) VALUES (
-                        '$id_movimiento', '$i', '$monto_cuota', '$fecha_cuota', 'PENDIENTE'
+                        '$id_movimiento', '$i', '$monto_cuota', '$fecha_cuota', 'PENDIENTE', '$fecha_creacion', '$cod_personal'
                     )";
                     mysqli_query($conexion, $sqlCuota);
 
@@ -2758,9 +2758,9 @@ if ($modulo == 'MovimientosFinancieros') {
             } else {
                 // Una sola cuota
                 $sqlCuota = "INSERT INTO cuotas_movimientos (
-                    id_movimiento, numero_cuota, monto_cuota, fecha_vencimiento, estado
+                    id_movimiento, numero_cuota, monto_cuota, fecha_vencimiento, estado, fecha_creacion, cod_personal
                 ) VALUES (
-                    '$id_movimiento', '1', '$monto_total', '$fecha_primera_cuota', 'PENDIENTE'
+                    '$id_movimiento', '1', '$monto_total', '$fecha_primera_cuota', 'PENDIENTE', '$fecha_creacion', '$cod_personal'
                 )";
                 mysqli_query($conexion, $sqlCuota);
             }
