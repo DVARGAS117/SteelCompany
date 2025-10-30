@@ -2717,11 +2717,11 @@ if ($modulo == 'MovimientosFinancieros') {
         $monto_total = $_POST['monto_total'];
         $numero_cuotas = isset($_POST['numero_cuotas']) && $_POST['numero_cuotas'] !== '' ? $_POST['numero_cuotas'] : 1;
         $frecuencia_cuotas = isset($_POST['frecuencia_cuotas']) && $_POST['frecuencia_cuotas'] !== '' ? $_POST['frecuencia_cuotas'] : 'UNICO';
-        
+
         // CORREGIDO: Asegurar formato correcto de fecha (YYYY-MM-DD)
         $fecha_primera_cuota_raw = $_POST['fecha_primera_cuota'];
         $fecha_primera_cuota = date('Y-m-d', strtotime($fecha_primera_cuota_raw));
-        
+
         $categoria = $_POST['categoria'];
         $numero_resolucion = $_POST['numero_resolucion'];
         $notas = $_POST['notas'];
@@ -2790,7 +2790,7 @@ function calcularSiguienteFecha($fecha_actual, $frecuencia)
 {
     // Asegurar que la fecha esté en formato correcto
     $timestamp = strtotime($fecha_actual);
-    
+
     switch ($frecuencia) {
         case 'MENSUAL':
             $timestamp = strtotime('+1 month', $timestamp);

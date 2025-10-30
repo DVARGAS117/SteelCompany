@@ -24,6 +24,34 @@ require("config/inicializar-datos.php");
     <!-- App Css-->
     <link href="assets/css/app.min.css" id="app-style" rel="stylesheet" type="text/css" />
 
+    <style>
+        /* Estilos para mejorar el scroll horizontal del DataTable */
+        .dataTables_wrapper .dataTables_scroll {
+            overflow-x: auto;
+        }
+        
+        .dataTables_wrapper .dataTables_scrollHead,
+        .dataTables_wrapper .dataTables_scrollBody {
+            overflow: visible;
+        }
+        
+        .dataTables_wrapper table.dataTable {
+            width: 100% !important;
+            margin: 0 auto;
+        }
+        
+        /* Asegurar que la tabla no se comprima */
+        #datatable-buttons {
+            min-width: 1400px;
+            table-layout: auto !important;
+        }
+        
+        /* Botones del DataTable */
+        .dt-buttons {
+            margin-bottom: 15px;
+        }
+    </style>
+
 </head>
 
 <body data-sidebar="dark">
@@ -69,7 +97,8 @@ require("config/inicializar-datos.php");
                         <div class="col-12">
                             <div class="card">
                                 <div class="card-body">
-                                    <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                    <div style="overflow-x: auto;">
+                                        <table id="datatable-buttons" class="table table-striped table-bordered nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                         <thead>
                                             <tr>
                                                 <th width='8%'>Fecha</th>
@@ -158,6 +187,7 @@ require("config/inicializar-datos.php");
                                             ?>
                                         </tbody>
                                     </table>
+                                    </div>
                                 </div>
                             </div>
                         </div> <!-- end col -->
@@ -274,6 +304,110 @@ require("config/inicializar-datos.php");
     <script src="assets/js/app.js"></script>
 
     <script>
+        // Reinicializar DataTable con configuración personalizada para scroll horizontal
+        $(document).ready(function() {
+            // Destruir la inicialización anterior si existe
+            if ($.fn.DataTable.isDataTable('#datatable-buttons')) {
+                $('#datatable-buttons').DataTable().destroy();
+            }
+            
+            // Inicializar con configuración personalizada
+            $('#datatable-buttons').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    {
+                        extend: 'colvis',
+                        text: 'Columnas Visibles',
+                        columns: ':not(.no-export)'
+                    },
+                    'copy', 
+                    {
+                        extend: 'csv',
+                        exportOptions: {
+                            columns: ':visible:not(.no-export)'
+                        }
+                    },
+                    {
+                        extend: 'excel',
+                        exportOptions: {
+                            columns: ':visible:not(.no-export)'
+                        }
+                    },
+                    {
+                        extend: 'pdf',
+                        orientation: 'landscape',
+                        pageSize: 'A4',
+                        exportOptions: {
+                            columns: ':visible:not(.no-export)'
+                        },
+                        customize: function(doc) {
+                            // Ajustar el título
+                            doc.content[1].table.widths = Array(doc.content[1].table.body[0].length + 1).join('*').split('');
+                            
+                            // Ajustar márgenes para mejor aprovechamiento
+                            doc.pageMargins = [20, 20, 20, 20];
+                            
+                            // Reducir tamaño de fuente para que quepa más
+                            doc.styles.tableHeader = {
+                                bold: true,
+                                fontSize: 9,
+                                color: 'white',
+                                fillColor: '#4e73df'
+                            };
+                            doc.defaultStyle.fontSize = 8;
+                            
+                            // Título del documento
+                            doc.content[0].text = 'Listado de Movimientos Financieros';
+                            doc.content[0].style = 'header';
+                            doc.content[0].alignment = 'center';
+                            doc.content[0].margin = [0, 0, 0, 10];
+                        }
+                    },
+                    'print'
+                ],
+                scrollX: true,
+                scrollCollapse: true,
+                fixedHeader: true,
+                paging: true,
+                pageLength: 25,
+                lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Todos"]],
+                order: [[0, 'desc']], // Ordenar por fecha descendente
+                language: {
+                    search: "Buscar:",
+                    lengthMenu: "Mostrar _MENU_ registros",
+                    info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                    infoEmpty: "Mostrando 0 a 0 de 0 registros",
+                    infoFiltered: "(filtrado de _MAX_ registros totales)",
+                    loadingRecords: "Cargando...",
+                    zeroRecords: "No se encontraron registros coincidentes",
+                    emptyTable: "No hay datos disponibles en la tabla",
+                    paginate: {
+                        first: "Primero",
+                        last: "Último",
+                        next: "Siguiente",
+                        previous: "Anterior"
+                    },
+                    buttons: {
+                        colvis: 'Seleccionar Columnas',
+                        colvisRestore: 'Restaurar'
+                    }
+                },
+                columnDefs: [
+                    { targets: 0, width: "100px" },  // Fecha
+                    { targets: 1, width: "100px" },  // Tipo
+                    { targets: 2, width: "120px" }, // Clasificación
+                    { targets: 3, width: "110px" }, // RUC
+                    { targets: 4, width: "200px" }, // Razón Social
+                    { targets: 5, width: "250px" }, // Concepto
+                    { targets: 6, width: "150px" }, // Categoría
+                    { targets: 7, width: "120px" }, // Monto
+                    { targets: 8, width: "80px", className: 'text-center' },  // Cuotas
+                    { targets: 9, width: "100px" }, // Estado
+                    { targets: 10, width: "100px", className: 'no-export', orderable: false }  // Acción
+                ]
+            });
+        });
+        
         // Función para ver cuotas de un movimiento
         function verCuotas(id_movimiento) {
             // Aquí se podría abrir un modal con las cuotas
