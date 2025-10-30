@@ -208,7 +208,7 @@ require("config/permisos.php");
 
                                         <div class="d-flex justify-content-end">
                                             <button type="submit" class="btn btn-primary">Guardar Movimiento</button>
-                                            <a href="listado-movimientos.php?sub_modulo=ListadoMovimientos" class="btn btn-secondary ms-2">Cancelar</a>
+                                            <a href="listado-movimientos.php?sub_modulo=Listado de Movimientos" class="btn btn-secondary ms-2">Cancelar</a>
                                         </div>
                                     </form>
                                 </div>

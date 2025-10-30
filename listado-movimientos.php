@@ -54,7 +54,7 @@ require("config/inicializar-datos.php");
                                 <!-- **************************************** -->
                                 <div class="page-title-right">
                                     <div class="button-items">
-                                        <a href="registrar-movimiento.php?sub_modulo=RegistrarMovimiento" class="btn btn-primary waves-effect waves-light">
+                                        <a href="registrar-movimiento.php?sub_modulo=Registrar Movimiento" class="btn btn-primary waves-effect waves-light">
                                             Nuevo Movimiento <i class="ri-add-line align-middle ms-2"></i>
                                         </a>
                                     </div>
