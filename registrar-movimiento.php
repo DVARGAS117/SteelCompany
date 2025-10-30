@@ -149,7 +149,7 @@ require("config/permisos.php");
                                             <div class="col-md-4">
                                                 <div class="mb-3">
                                                     <label for="fecha_pago_unico" class="form-label">Fecha de Pago <span class="text-danger">*</span></label>
-                                                    <input type="date" class="form-control" id="fecha_pago_unico" name="fecha_pago_unico" required>
+                                                    <input type="date" class="form-control" id="fecha_pago_unico" name="fecha_primera_cuota" required>
                                                 </div>
                                             </div>
                                         </div>
