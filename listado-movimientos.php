@@ -29,23 +29,23 @@ require("config/inicializar-datos.php");
         .dataTables_wrapper .dataTables_scroll {
             overflow-x: auto;
         }
-        
+
         .dataTables_wrapper .dataTables_scrollHead,
         .dataTables_wrapper .dataTables_scrollBody {
             overflow: visible;
         }
-        
+
         .dataTables_wrapper table.dataTable {
             width: 100% !important;
             margin: 0 auto;
         }
-        
+
         /* Asegurar que la tabla no se comprima */
         #datatable-buttons {
             min-width: 1400px;
             table-layout: auto !important;
         }
-        
+
         /* Botones del DataTable */
         .dt-buttons {
             margin-bottom: 15px;
@@ -99,94 +99,94 @@ require("config/inicializar-datos.php");
                                 <div class="card-body">
                                     <div style="overflow-x: auto;">
                                         <table id="datatable-buttons" class="table table-striped table-bordered nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                                        <thead>
-                                            <tr>
-                                                <th width='8%'>Fecha</th>
-                                                <th width='8%'>Tipo</th>
-                                                <th width='10%'>Clasificación</th>
-                                                <th width='10%'>RUC</th>
-                                                <th>Razón Social</th>
-                                                <th>Concepto</th>
-                                                <th width='10%'>Categoría</th>
-                                                <th width='10%'>Monto Total</th>
-                                                <th width='8%'>Cuotas</th>
-                                                <th width='8%'>Estado</th>
-                                                <th width='10%'>Acción</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <?php
-                                            $sqlConsulta = mysqli_query($conexion, "SELECT * FROM ingresos_egresos ORDER BY fecha_creacion DESC");
-                                            while ($fmov = mysqli_fetch_array($sqlConsulta)) {
-                                                $id_movimiento = $fmov['id_movimiento'];
-                                                $tipo = $fmov['tipo'];
-                                                $clasificacion = $fmov['clasificacion'];
-                                                $ruc = $fmov['ruc'];
-                                                $razon_social = $fmov['razon_social'];
-                                                $concepto = $fmov['concepto'];
-                                                $categoria = $fmov['categoria'];
-                                                $monto_total = $fmov['monto_total'];
-                                                $numero_cuotas = $fmov['numero_cuotas'];
-                                                $fecha_primera_cuota = $fmov['fecha_primera_cuota'];
-
-                                                // Badge para tipo
-                                                if ($tipo == 'INGRESO') {
-                                                    $badge_tipo = "<span class='badge rounded-pill bg-success'>INGRESO</span>";
-                                                } else {
-                                                    $badge_tipo = "<span class='badge rounded-pill bg-danger'>EGRESO</span>";
-                                                }
-
-                                                // Badge para clasificación
-                                                if ($clasificacion == 'EMPRESARIAL') {
-                                                    $badge_clas = "<span class='badge rounded-pill bg-primary'>EMPRESARIAL</span>";
-                                                } else {
-                                                    $badge_clas = "<span class='badge rounded-pill bg-info'>PERSONAL</span>";
-                                                }
-
-                                                // Badge para estado
-                                                if ($fmov['estado'] == 'A') {
-                                                    $badge_estado = "<span class='badge rounded-pill bg-success'>Activo</span>";
-                                                } else {
-                                                    $badge_estado = "<span class='badge rounded-pill bg-secondary'>Inactivo</span>";
-                                                }
-
-                                                // Formato de fecha
-                                                $fecha_formateada = date('d/m/Y', strtotime($fecha_primera_cuota));
-
-                                                // RUC y Razón social
-                                                $ruc_display = !empty($ruc) ? $ruc : '-';
-                                                $razon_display = !empty($razon_social) ? $razon_social : '-';
-                                                $concepto_corto = strlen($concepto) > 50 ? substr($concepto, 0, 50) . '...' : $concepto;
-                                                $categoria_display = !empty($categoria) ? str_replace('_', ' ', $categoria) : '-';
-                                            ?>
+                                            <thead>
                                                 <tr>
-                                                    <td><?= $fecha_formateada ?></td>
-                                                    <td><?= $badge_tipo ?></td>
-                                                    <td><?= $badge_clas ?></td>
-                                                    <td><?= $ruc_display ?></td>
-                                                    <td><?= $razon_display ?></td>
-                                                    <td title="<?= $concepto ?>"><?= $concepto_corto ?></td>
-                                                    <td><?= $categoria_display ?></td>
-                                                    <td>S/ <?= number_format($monto_total, 2) ?></td>
-                                                    <td align="center"><?= $numero_cuotas ?></td>
-                                                    <td><?= $badge_estado ?></td>
-                                                    <td>
-                                                        <button type="button" class="btn btn-outline-info btn-sm" onclick="verCuotas(<?= $id_movimiento ?>)" title="Ver Cuotas">
-                                                            <i class="ri-list-check align-middle"></i>
-                                                        </button>
-                                                        <!--
+                                                    <th width='8%'>Fecha</th>
+                                                    <th width='8%'>Tipo</th>
+                                                    <th width='10%'>Clasificación</th>
+                                                    <th width='10%'>RUC</th>
+                                                    <th>Razón Social</th>
+                                                    <th>Concepto</th>
+                                                    <th width='10%'>Categoría</th>
+                                                    <th width='10%'>Monto Total</th>
+                                                    <th width='8%'>Cuotas</th>
+                                                    <th width='8%'>Estado</th>
+                                                    <th width='10%'>Acción</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php
+                                                $sqlConsulta = mysqli_query($conexion, "SELECT * FROM ingresos_egresos ORDER BY fecha_creacion DESC");
+                                                while ($fmov = mysqli_fetch_array($sqlConsulta)) {
+                                                    $id_movimiento = $fmov['id_movimiento'];
+                                                    $tipo = $fmov['tipo'];
+                                                    $clasificacion = $fmov['clasificacion'];
+                                                    $ruc = $fmov['ruc'];
+                                                    $razon_social = $fmov['razon_social'];
+                                                    $concepto = $fmov['concepto'];
+                                                    $categoria = $fmov['categoria'];
+                                                    $monto_total = $fmov['monto_total'];
+                                                    $numero_cuotas = $fmov['numero_cuotas'];
+                                                    $fecha_primera_cuota = $fmov['fecha_primera_cuota'];
+
+                                                    // Badge para tipo
+                                                    if ($tipo == 'INGRESO') {
+                                                        $badge_tipo = "<span class='badge rounded-pill bg-success'>INGRESO</span>";
+                                                    } else {
+                                                        $badge_tipo = "<span class='badge rounded-pill bg-danger'>EGRESO</span>";
+                                                    }
+
+                                                    // Badge para clasificación
+                                                    if ($clasificacion == 'EMPRESARIAL') {
+                                                        $badge_clas = "<span class='badge rounded-pill bg-primary'>EMPRESARIAL</span>";
+                                                    } else {
+                                                        $badge_clas = "<span class='badge rounded-pill bg-info'>PERSONAL</span>";
+                                                    }
+
+                                                    // Badge para estado
+                                                    if ($fmov['estado'] == 'A') {
+                                                        $badge_estado = "<span class='badge rounded-pill bg-success'>Activo</span>";
+                                                    } else {
+                                                        $badge_estado = "<span class='badge rounded-pill bg-secondary'>Inactivo</span>";
+                                                    }
+
+                                                    // Formato de fecha
+                                                    $fecha_formateada = date('d/m/Y', strtotime($fecha_primera_cuota));
+
+                                                    // RUC y Razón social
+                                                    $ruc_display = !empty($ruc) ? $ruc : '-';
+                                                    $razon_display = !empty($razon_social) ? $razon_social : '-';
+                                                    $concepto_corto = strlen($concepto) > 50 ? substr($concepto, 0, 50) . '...' : $concepto;
+                                                    $categoria_display = !empty($categoria) ? str_replace('_', ' ', $categoria) : '-';
+                                                ?>
+                                                    <tr>
+                                                        <td><?= $fecha_formateada ?></td>
+                                                        <td><?= $badge_tipo ?></td>
+                                                        <td><?= $badge_clas ?></td>
+                                                        <td><?= $ruc_display ?></td>
+                                                        <td><?= $razon_display ?></td>
+                                                        <td title="<?= $concepto ?>"><?= $concepto_corto ?></td>
+                                                        <td><?= $categoria_display ?></td>
+                                                        <td>S/ <?= number_format($monto_total, 2) ?></td>
+                                                        <td align="center"><?= $numero_cuotas ?></td>
+                                                        <td><?= $badge_estado ?></td>
+                                                        <td>
+                                                            <button type="button" class="btn btn-outline-info btn-sm" onclick="verCuotas(<?= $id_movimiento ?>)" title="Ver Cuotas">
+                                                                <i class="ri-list-check align-middle"></i>
+                                                            </button>
+                                                            <!--
                                                         <a href="" class="btn btn-outline-danger btn-sm borrarReg">
                                                             <i class="ri-delete-bin-fill align-middle"></i>
                                                             <input type="hidden" name="codborrar" value="<?= $id_movimiento ?>" class="codborrar">
                                                         </a>
                                                         -->
-                                                    </td>
-                                                </tr>
-                                            <?php
-                                            }
-                                            ?>
-                                        </tbody>
-                                    </table>
+                                                        </td>
+                                                    </tr>
+                                                <?php
+                                                }
+                                                ?>
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
@@ -310,17 +310,16 @@ require("config/inicializar-datos.php");
             if ($.fn.DataTable.isDataTable('#datatable-buttons')) {
                 $('#datatable-buttons').DataTable().destroy();
             }
-            
+
             // Inicializar con configuración personalizada
             $('#datatable-buttons').DataTable({
                 dom: 'Bfrtip',
-                buttons: [
-                    {
+                buttons: [{
                         extend: 'colvis',
                         text: 'Columnas Visibles',
                         columns: ':not(.no-export)'
                     },
-                    'copy', 
+                    'copy',
                     {
                         extend: 'csv',
                         exportOptions: {
@@ -343,10 +342,10 @@ require("config/inicializar-datos.php");
                         customize: function(doc) {
                             // Ajustar el título
                             doc.content[1].table.widths = Array(doc.content[1].table.body[0].length + 1).join('*').split('');
-                            
+
                             // Ajustar márgenes para mejor aprovechamiento
                             doc.pageMargins = [20, 20, 20, 20];
-                            
+
                             // Reducir tamaño de fuente para que quepa más
                             doc.styles.tableHeader = {
                                 bold: true,
@@ -355,7 +354,7 @@ require("config/inicializar-datos.php");
                                 fillColor: '#4e73df'
                             };
                             doc.defaultStyle.fontSize = 8;
-                            
+
                             // Título del documento
                             doc.content[0].text = 'Listado de Movimientos Financieros';
                             doc.content[0].style = 'header';
@@ -370,8 +369,13 @@ require("config/inicializar-datos.php");
                 fixedHeader: true,
                 paging: true,
                 pageLength: 25,
-                lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Todos"]],
-                order: [[0, 'desc']], // Ordenar por fecha descendente
+                lengthMenu: [
+                    [10, 25, 50, 100, -1],
+                    [10, 25, 50, 100, "Todos"]
+                ],
+                order: [
+                    [0, 'desc']
+                ], // Ordenar por fecha descendente
                 language: {
                     search: "Buscar:",
                     lengthMenu: "Mostrar _MENU_ registros",
@@ -392,22 +396,57 @@ require("config/inicializar-datos.php");
                         colvisRestore: 'Restaurar'
                     }
                 },
-                columnDefs: [
-                    { targets: 0, width: "100px" },  // Fecha
-                    { targets: 1, width: "100px" },  // Tipo
-                    { targets: 2, width: "120px" }, // Clasificación
-                    { targets: 3, width: "110px" }, // RUC
-                    { targets: 4, width: "200px" }, // Razón Social
-                    { targets: 5, width: "250px" }, // Concepto
-                    { targets: 6, width: "150px" }, // Categoría
-                    { targets: 7, width: "120px" }, // Monto
-                    { targets: 8, width: "80px", className: 'text-center' },  // Cuotas
-                    { targets: 9, width: "100px" }, // Estado
-                    { targets: 10, width: "100px", className: 'no-export', orderable: false }  // Acción
+                columnDefs: [{
+                        targets: 0,
+                        width: "100px"
+                    }, // Fecha
+                    {
+                        targets: 1,
+                        width: "100px"
+                    }, // Tipo
+                    {
+                        targets: 2,
+                        width: "120px"
+                    }, // Clasificación
+                    {
+                        targets: 3,
+                        width: "110px"
+                    }, // RUC
+                    {
+                        targets: 4,
+                        width: "200px"
+                    }, // Razón Social
+                    {
+                        targets: 5,
+                        width: "250px"
+                    }, // Concepto
+                    {
+                        targets: 6,
+                        width: "150px"
+                    }, // Categoría
+                    {
+                        targets: 7,
+                        width: "120px"
+                    }, // Monto
+                    {
+                        targets: 8,
+                        width: "80px",
+                        className: 'text-center'
+                    }, // Cuotas
+                    {
+                        targets: 9,
+                        width: "100px"
+                    }, // Estado
+                    {
+                        targets: 10,
+                        width: "100px",
+                        className: 'no-export',
+                        orderable: false
+                    } // Acción
                 ]
             });
         });
-        
+
         // Función para ver cuotas de un movimiento
         function verCuotas(id_movimiento) {
             // Aquí se podría abrir un modal con las cuotas
