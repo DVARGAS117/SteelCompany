@@ -2717,7 +2717,11 @@ if ($modulo == 'MovimientosFinancieros') {
         $monto_total = $_POST['monto_total'];
         $numero_cuotas = isset($_POST['numero_cuotas']) && $_POST['numero_cuotas'] !== '' ? $_POST['numero_cuotas'] : 1;
         $frecuencia_cuotas = isset($_POST['frecuencia_cuotas']) && $_POST['frecuencia_cuotas'] !== '' ? $_POST['frecuencia_cuotas'] : 'UNICO';
-        $fecha_primera_cuota = $_POST['fecha_primera_cuota'];
+        
+        // CORREGIDO: Asegurar formato correcto de fecha (YYYY-MM-DD)
+        $fecha_primera_cuota_raw = $_POST['fecha_primera_cuota'];
+        $fecha_primera_cuota = date('Y-m-d', strtotime($fecha_primera_cuota_raw));
+        
         $categoria = $_POST['categoria'];
         $numero_resolucion = $_POST['numero_resolucion'];
         $notas = $_POST['notas'];
@@ -2784,23 +2788,27 @@ if ($modulo == 'MovimientosFinancieros') {
 // Función auxiliar para calcular fechas de cuotas
 function calcularSiguienteFecha($fecha_actual, $frecuencia)
 {
-    $fecha = new DateTime($fecha_actual);
-
+    // Asegurar que la fecha esté en formato correcto
+    $timestamp = strtotime($fecha_actual);
+    
     switch ($frecuencia) {
         case 'MENSUAL':
-            $fecha->modify('+1 month');
+            $timestamp = strtotime('+1 month', $timestamp);
             break;
         case 'QUINCENAL':
-            $fecha->modify('+15 days');
+            $timestamp = strtotime('+15 days', $timestamp);
             break;
         case 'SEMANAL':
-            $fecha->modify('+7 days');
+            $timestamp = strtotime('+7 days', $timestamp);
             break;
         case 'PERSONALIZADO':
             // Por defecto mensual
-            $fecha->modify('+1 month');
+            $timestamp = strtotime('+1 month', $timestamp);
+            break;
+        default:
+            $timestamp = strtotime('+1 month', $timestamp);
             break;
     }
 
-    return $fecha->format('Y-m-d');
+    return date('Y-m-d', $timestamp);
 }
