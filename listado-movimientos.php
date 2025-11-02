@@ -552,7 +552,7 @@ require("config/inicializar-datos.php");
                     console.error('Status:', status);
                     console.error('Error:', error);
                     console.error('Response Text:', xhr.responseText);
-                    
+
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',

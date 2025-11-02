@@ -26,7 +26,7 @@ if (!isset($_POST['accion']) || !isset($_POST['id_cuota'])) {
 $accion = $_POST['accion'];
 $id_cuota = intval($_POST['id_cuota']);
 $fecha_actualizacion = date('Y-m-d H:i:s');
-$cod_personal = $_SESSION['cod_personal'];
+$cod_personal = isset($_SESSION['cod_personal']) ? intval($_SESSION['cod_personal']) : 1;
 
 // Obtener información de la cuota actual
 $sqlCuota = "SELECT c.*, m.monto_total 
@@ -69,9 +69,9 @@ switch ($accion) {
 
         // Actualizar el monto de la cuota
         $sqlUpdate = "UPDATE cuotas_movimientos 
-                      SET monto_cuota = $nuevo_monto,
-                          fecha_actualizacion = '$fecha_actualizacion',
-                          cod_personal = $cod_personal
+                      SET monto_cuota = $nuevo_monto, 
+                          fecha_actualizacion = '$fecha_actualizacion', 
+                          cod_personal = $cod_personal 
                       WHERE id_cuota = $id_cuota";
 
         if (mysqli_query($conexion, $sqlUpdate)) {
@@ -116,10 +116,10 @@ switch ($accion) {
         $fecha_pago = date('Y-m-d');
 
         $sqlUpdate = "UPDATE cuotas_movimientos 
-                      SET estado = 'PAGADA',
-                          fecha_pago = '$fecha_pago',
-                          fecha_actualizacion = '$fecha_actualizacion',
-                          cod_personal = $cod_personal
+                      SET estado = 'PAGADA', 
+                          fecha_pago = '$fecha_pago', 
+                          fecha_actualizacion = '$fecha_actualizacion', 
+                          cod_personal = $cod_personal 
                       WHERE id_cuota = $id_cuota";
 
         if (mysqli_query($conexion, $sqlUpdate)) {
@@ -150,10 +150,10 @@ switch ($accion) {
         $estado_nuevo = ($cuotaActual['fecha_vencimiento'] < $fecha_actual) ? 'VENCIDA' : 'PENDIENTE';
 
         $sqlUpdate = "UPDATE cuotas_movimientos 
-                      SET estado = '$estado_nuevo',
-                          fecha_pago = NULL,
-                          fecha_actualizacion = '$fecha_actualizacion',
-                          cod_personal = $cod_personal
+                      SET estado = '$estado_nuevo', 
+                          fecha_pago = NULL, 
+                          fecha_actualizacion = '$fecha_actualizacion', 
+                          cod_personal = $cod_personal 
                       WHERE id_cuota = $id_cuota";
 
         if (mysqli_query($conexion, $sqlUpdate)) {
@@ -212,4 +212,3 @@ switch ($accion) {
         ]);
         break;
 }
-?>
