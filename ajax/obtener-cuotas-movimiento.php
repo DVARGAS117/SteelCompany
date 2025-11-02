@@ -1,7 +1,18 @@
 <?php
+// Deshabilitar el reporte de errores en la salida
+error_reporting(0);
+ini_set('display_errors', 0);
+
+// Limpiar cualquier salida previa
+ob_start();
+
 // Iniciar sesión y conexión
 require("../config/conexion.php");
 require("../config/inicializar-datos.php");
+
+// Limpiar buffer y establecer header JSON
+ob_end_clean();
+header('Content-Type: application/json');
 
 // Verificar que se recibió el ID del movimiento
 if (!isset($_POST['id_movimiento']) || empty($_POST['id_movimiento'])) {

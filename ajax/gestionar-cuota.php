@@ -1,7 +1,18 @@
 <?php
+// Deshabilitar el reporte de errores en la salida
+error_reporting(0);
+ini_set('display_errors', 0);
+
+// Limpiar cualquier salida previa
+ob_start();
+
 // Iniciar sesión y conexión
 require("../config/conexion.php");
 require("../config/inicializar-datos.php");
+
+// Limpiar buffer y establecer header JSON
+ob_end_clean();
+header('Content-Type: application/json');
 
 // Verificar que se recibieron los datos necesarios
 if (!isset($_POST['accion']) || !isset($_POST['id_cuota'])) {
@@ -45,9 +56,9 @@ switch ($accion) {
             ]);
             exit;
         }
-        
+
         $nuevo_monto = floatval($_POST['nuevo_monto']);
-        
+
         if ($nuevo_monto <= 0) {
             echo json_encode([
                 'success' => false,
@@ -55,14 +66,14 @@ switch ($accion) {
             ]);
             exit;
         }
-        
+
         // Actualizar el monto de la cuota
         $sqlUpdate = "UPDATE cuotas_movimientos 
                       SET monto_cuota = $nuevo_monto,
                           fecha_actualizacion = '$fecha_actualizacion',
                           cod_personal = $cod_personal
                       WHERE id_cuota = $id_cuota";
-        
+
         if (mysqli_query($conexion, $sqlUpdate)) {
             // Calcular el nuevo monto total sumando todas las cuotas
             $sqlSumaCuotas = "SELECT SUM(monto_cuota) as total_cuotas 
@@ -71,14 +82,14 @@ switch ($accion) {
             $resultSuma = mysqli_query($conexion, $sqlSumaCuotas);
             $suma = mysqli_fetch_assoc($resultSuma);
             $nuevo_monto_total = $suma['total_cuotas'];
-            
+
             // Actualizar el monto total del movimiento
             $sqlUpdateMovimiento = "UPDATE ingresos_egresos 
                                    SET monto_total = $nuevo_monto_total,
                                        fecha_actualizacion = '$fecha_actualizacion'
                                    WHERE id_movimiento = $id_movimiento";
             mysqli_query($conexion, $sqlUpdateMovimiento);
-            
+
             echo json_encode([
                 'success' => true,
                 'message' => 'Monto de cuota actualizado correctamente',
@@ -91,7 +102,7 @@ switch ($accion) {
             ]);
         }
         break;
-        
+
     case 'pagar':
         // Marcar cuota como pagada
         if ($cuotaActual['estado'] == 'PAGADA') {
@@ -101,16 +112,16 @@ switch ($accion) {
             ]);
             exit;
         }
-        
+
         $fecha_pago = date('Y-m-d');
-        
+
         $sqlUpdate = "UPDATE cuotas_movimientos 
                       SET estado = 'PAGADA',
                           fecha_pago = '$fecha_pago',
                           fecha_actualizacion = '$fecha_actualizacion',
                           cod_personal = $cod_personal
                       WHERE id_cuota = $id_cuota";
-        
+
         if (mysqli_query($conexion, $sqlUpdate)) {
             echo json_encode([
                 'success' => true,
@@ -123,7 +134,7 @@ switch ($accion) {
             ]);
         }
         break;
-        
+
     case 'revertir':
         // Revertir cuota pagada a pendiente
         if ($cuotaActual['estado'] != 'PAGADA') {
@@ -133,18 +144,18 @@ switch ($accion) {
             ]);
             exit;
         }
-        
+
         // Verificar si está vencida
         $fecha_actual = date('Y-m-d');
         $estado_nuevo = ($cuotaActual['fecha_vencimiento'] < $fecha_actual) ? 'VENCIDA' : 'PENDIENTE';
-        
+
         $sqlUpdate = "UPDATE cuotas_movimientos 
                       SET estado = '$estado_nuevo',
                           fecha_pago = NULL,
                           fecha_actualizacion = '$fecha_actualizacion',
                           cod_personal = $cod_personal
                       WHERE id_cuota = $id_cuota";
-        
+
         if (mysqli_query($conexion, $sqlUpdate)) {
             echo json_encode([
                 'success' => true,
@@ -157,11 +168,11 @@ switch ($accion) {
             ]);
         }
         break;
-        
+
     case 'eliminar':
         // Eliminar cuota
         $sqlDelete = "DELETE FROM cuotas_movimientos WHERE id_cuota = $id_cuota";
-        
+
         if (mysqli_query($conexion, $sqlDelete)) {
             // Calcular el nuevo monto total sumando las cuotas restantes
             $sqlSumaCuotas = "SELECT SUM(monto_cuota) as total_cuotas, COUNT(*) as total_cuotas_restantes
@@ -171,7 +182,7 @@ switch ($accion) {
             $suma = mysqli_fetch_assoc($resultSuma);
             $nuevo_monto_total = $suma['total_cuotas'] ?? 0;
             $cuotas_restantes = $suma['total_cuotas_restantes'];
-            
+
             // Actualizar el movimiento principal
             $sqlUpdateMovimiento = "UPDATE ingresos_egresos 
                                    SET monto_total = $nuevo_monto_total,
@@ -179,7 +190,7 @@ switch ($accion) {
                                        fecha_actualizacion = '$fecha_actualizacion'
                                    WHERE id_movimiento = $id_movimiento";
             mysqli_query($conexion, $sqlUpdateMovimiento);
-            
+
             echo json_encode([
                 'success' => true,
                 'message' => 'Cuota eliminada correctamente',
@@ -193,7 +204,7 @@ switch ($accion) {
             ]);
         }
         break;
-        
+
     default:
         echo json_encode([
             'success' => false,

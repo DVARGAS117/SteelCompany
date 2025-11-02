@@ -520,12 +520,14 @@ require("config/inicializar-datos.php");
         // Función para ver cuotas de un movimiento
         function verCuotas(id_movimiento) {
             movimientoActualId = id_movimiento;
-            
+
             // Realizar petición AJAX para obtener las cuotas
             $.ajax({
                 url: 'ajax/obtener-cuotas-movimiento.php',
                 type: 'POST',
-                data: { id_movimiento: id_movimiento },
+                data: {
+                    id_movimiento: id_movimiento
+                },
                 dataType: 'json',
                 beforeSend: function() {
                     // Mostrar loading
@@ -546,11 +548,16 @@ require("config/inicializar-datos.php");
                     }
                 },
                 error: function(xhr, status, error) {
+                    console.error('Error completo:', xhr);
+                    console.error('Status:', status);
                     console.error('Error:', error);
+                    console.error('Response Text:', xhr.responseText);
+                    
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
-                        text: 'Error al cargar las cuotas. Por favor, intente nuevamente.'
+                        html: 'Error al cargar las cuotas.<br><small>Revise la consola para más detalles.</small>',
+                        footer: '<small>Status: ' + status + '</small>'
                     });
                 }
             });
@@ -558,18 +565,18 @@ require("config/inicializar-datos.php");
 
         // Función para cargar la información del movimiento principal
         function cargarInfoMovimiento(movimiento) {
-            const badgeTipo = movimiento.tipo === 'INGRESO' 
-                ? '<span class="badge bg-success">INGRESO</span>' 
-                : '<span class="badge bg-danger">EGRESO</span>';
-            
-            const badgeClasif = movimiento.clasificacion === 'EMPRESARIAL'
-                ? '<span class="badge bg-primary">EMPRESARIAL</span>'
-                : '<span class="badge bg-info">PERSONAL</span>';
-            
+            const badgeTipo = movimiento.tipo === 'INGRESO' ?
+                '<span class="badge bg-success">INGRESO</span>' :
+                '<span class="badge bg-danger">EGRESO</span>';
+
+            const badgeClasif = movimiento.clasificacion === 'EMPRESARIAL' ?
+                '<span class="badge bg-primary">EMPRESARIAL</span>' :
+                '<span class="badge bg-info">PERSONAL</span>';
+
             const rucDisplay = movimiento.ruc || 'N/A';
             const razonDisplay = movimiento.razon_social || 'N/A';
             const fecha = new Date(movimiento.fecha_primera_cuota).toLocaleDateString('es-PE');
-            
+
             let html = `
                 <div class="col-md-6">
                     <p><strong>Tipo:</strong> ${badgeTipo}</p>
@@ -584,7 +591,7 @@ require("config/inicializar-datos.php");
                     <p><strong>Fecha Inicial:</strong> ${fecha}</p>
                 </div>
             `;
-            
+
             $('#infoMovimiento').html(html);
         }
 
@@ -594,14 +601,14 @@ require("config/inicializar-datos.php");
                 $('#cuotasBody').html('<tr><td colspan="6" class="text-center">No hay cuotas registradas</td></tr>');
                 return;
             }
-            
+
             let html = '';
             cuotas.forEach(function(cuota) {
                 const fechaVenc = new Date(cuota.fecha_vencimiento).toLocaleDateString('es-PE');
                 const fechaPago = cuota.fecha_pago ? new Date(cuota.fecha_pago).toLocaleDateString('es-PE') : '-';
-                
+
                 let badgeEstado = '';
-                switch(cuota.estado) {
+                switch (cuota.estado) {
                     case 'PAGADA':
                         badgeEstado = '<span class="badge bg-success">PAGADA</span>';
                         break;
@@ -612,34 +619,34 @@ require("config/inicializar-datos.php");
                         badgeEstado = '<span class="badge bg-warning">PENDIENTE</span>';
                         break;
                 }
-                
+
                 // Botones de acción según el estado
                 let botones = '';
-                
+
                 // Botón editar (siempre disponible)
                 botones += `<button type="button" class="btn btn-sm btn-warning" onclick="abrirModalEditarCuota(${cuota.id_cuota}, ${cuota.monto_cuota})" title="Editar Monto">
                     <i class="ri-edit-line"></i> Editar
                 </button> `;
-                
+
                 // Botón pagar (solo si no está pagada)
                 if (cuota.estado !== 'PAGADA') {
                     botones += `<button type="button" class="btn btn-sm btn-success" onclick="pagarCuota(${cuota.id_cuota})" title="Marcar como Pagada">
                         <i class="ri-money-dollar-circle-line"></i> Pagar
                     </button> `;
                 }
-                
+
                 // Botón revertir (solo si está pagada)
                 if (cuota.estado === 'PAGADA') {
                     botones += `<button type="button" class="btn btn-sm btn-info" onclick="revertirCuota(${cuota.id_cuota})" title="Revertir a Pendiente">
                         <i class="ri-arrow-go-back-line"></i> Revertir
                     </button> `;
                 }
-                
+
                 // Botón eliminar (siempre disponible)
                 botones += `<button type="button" class="btn btn-sm btn-danger" onclick="eliminarCuota(${cuota.id_cuota})" title="Eliminar Cuota">
                     <i class="ri-delete-bin-line"></i> Eliminar
                 </button>`;
-                
+
                 html += `
                     <tr>
                         <td class="text-center">${cuota.numero_cuota}</td>
@@ -651,7 +658,7 @@ require("config/inicializar-datos.php");
                     </tr>
                 `;
             });
-            
+
             $('#cuotasBody').html(html);
         }
 
@@ -667,7 +674,7 @@ require("config/inicializar-datos.php");
         function confirmarEditarCuota() {
             const idCuota = $('#editarIdCuota').val();
             const nuevoMonto = parseFloat($('#editarMontoCuota').val());
-            
+
             if (!nuevoMonto || nuevoMonto <= 0) {
                 Swal.fire({
                     icon: 'warning',
@@ -676,7 +683,7 @@ require("config/inicializar-datos.php");
                 });
                 return;
             }
-            
+
             Swal.fire({
                 title: '¿Confirmar cambio de monto?',
                 html: `Al modificar el monto de esta cuota, el <strong>monto total del movimiento será recalculado</strong>.<br><br>¿Desea continuar?`,
