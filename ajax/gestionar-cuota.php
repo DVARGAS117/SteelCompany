@@ -131,7 +131,7 @@ switch ($accion) {
             $resultSuma = mysqli_query($conexion, $sqlSumaPagadas);
             $suma = mysqli_fetch_assoc($resultSuma);
             $monto_pagado = $suma['total_pagado'] ?? 0;
-            
+
             echo json_encode([
                 'success' => true,
                 'message' => 'Cuota marcada como pagada correctamente',
@@ -175,7 +175,7 @@ switch ($accion) {
             $resultSuma = mysqli_query($conexion, $sqlSumaPagadas);
             $suma = mysqli_fetch_assoc($resultSuma);
             $monto_pagado = $suma['total_pagado'] ?? 0;
-            
+
             echo json_encode([
                 'success' => true,
                 'message' => 'Cuota revertida a estado ' . $estado_nuevo . ' correctamente',

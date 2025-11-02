@@ -146,11 +146,36 @@ require("config/inicializar-datos.php");
                                                         $badge_clas = "<span class='badge rounded-pill bg-info'>PERSONAL</span>";
                                                     }
 
-                                                    // Badge para estado
-                                                    if ($fmov['estado'] == 'A') {
-                                                        $badge_estado = "<span class='badge rounded-pill bg-success'>Activo</span>";
+                                                    // Calcular el estado de pago basado en las cuotas
+                                                    $sqlCuotas = mysqli_query($conexion, "
+                                                        SELECT 
+                                                            COUNT(*) as total_cuotas,
+                                                            SUM(CASE WHEN estado = 'PAGADA' THEN 1 ELSE 0 END) as cuotas_pagadas,
+                                                            SUM(CASE WHEN estado = 'PENDIENTE' OR estado = 'VENCIDA' THEN 1 ELSE 0 END) as cuotas_pendientes
+                                                        FROM cuotas_movimientos 
+                                                        WHERE id_movimiento = $id_movimiento
+                                                    ");
+                                                    $estadoCuotas = mysqli_fetch_assoc($sqlCuotas);
+                                                    
+                                                    $total_cuotas = $estadoCuotas['total_cuotas'];
+                                                    $cuotas_pagadas = $estadoCuotas['cuotas_pagadas'];
+                                                    $cuotas_pendientes = $estadoCuotas['cuotas_pendientes'];
+                                                    
+                                                    // Determinar badge de estado de pago
+                                                    if ($total_cuotas > 0) {
+                                                        if ($cuotas_pagadas == $total_cuotas) {
+                                                            // Todas las cuotas están pagadas
+                                                            $badge_estado = "<span class='badge rounded-pill bg-success'>PAGADO</span>";
+                                                        } elseif ($cuotas_pagadas > 0) {
+                                                            // Algunas cuotas pagadas
+                                                            $badge_estado = "<span class='badge rounded-pill bg-warning text-dark'>PARCIAL</span>";
+                                                        } else {
+                                                            // Ninguna cuota pagada
+                                                            $badge_estado = "<span class='badge rounded-pill bg-danger'>PENDIENTE</span>";
+                                                        }
                                                     } else {
-                                                        $badge_estado = "<span class='badge rounded-pill bg-secondary'>Inactivo</span>";
+                                                        // No hay cuotas registradas
+                                                        $badge_estado = "<span class='badge rounded-pill bg-secondary'>SIN CUOTAS</span>";
                                                     }
 
                                                     // Formato de fecha
@@ -576,7 +601,7 @@ require("config/inicializar-datos.php");
             const rucDisplay = movimiento.ruc || 'N/A';
             const razonDisplay = movimiento.razon_social || 'N/A';
             const fecha = new Date(movimiento.fecha_primera_cuota).toLocaleDateString('es-PE');
-            
+
             // Calcular monto pagado (suma de cuotas con estado PAGADA)
             let montoPagado = 0;
             if (cuotas && cuotas.length > 0) {
@@ -584,7 +609,7 @@ require("config/inicializar-datos.php");
                     .filter(c => c.estado === 'PAGADA')
                     .reduce((sum, c) => sum + parseFloat(c.monto_cuota), 0);
             }
-            
+
             const montoTotal = parseFloat(movimiento.monto_total);
             const porcentajePagado = montoTotal > 0 ? ((montoPagado / montoTotal) * 100).toFixed(1) : 0;
 
