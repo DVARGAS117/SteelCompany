@@ -1,0 +1,201 @@
+/* Estilos generales */
+body {
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Tarjetas de estadísticas */
+.mini-stats-card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.mini-stats-card .icon-box {
+    font-size: 48px;
+    opacity: 0.3;
+}
+
+/* Cuotas cards */
+.cuota-card {
+    border-left: 4px solid;
+    margin-bottom: 10px;
+    transition: transform 0.2s;
+}
+
+.cuota-card:hover {
+    transform: translateX(5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.cuota-vencida {
+    border-left-color: #dc3545;
+    background-color: #fff5f5;
+}
+
+.cuota-proxima {
+    border-left-color: #ffc107;
+    background-color: #fffbf0;
+}
+
+.cuota-normal {
+    border-left-color: #0dcaf0;
+    background-color: #f0f8ff;
+}
+
+.cuota-pagada {
+    border-left-color: #198754;
+    background-color: #f0fff4;
+}
+
+/* Gráfico de barras */
+.bar-chart {
+    margin-top: 20px;
+}
+
+.bar-item {
+    margin-bottom: 20px;
+}
+
+.bar-wrapper {
+    background-color: #e9ecef;
+    height: 35px;
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+}
+
+.bar {
+    height: 100%;
+    transition: width 0.8s ease;
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+    color: white;
+    font-weight: bold;
+    border-radius: 6px;
+}
+
+.bar-empresarial {
+    background: linear-gradient(90deg, #0d6efd 0%, #0a58ca 100%);
+}
+
+.bar-personal {
+    background: linear-gradient(90deg, #198754 0%, #146c43 100%);
+}
+
+.bar-label {
+    display: inline-block;
+    width: 100px;
+    font-weight: 600;
+    color: #495057;
+}
+
+.bar-value {
+    display: inline-block;
+    margin-left: 10px;
+    font-weight: 700;
+    color: #212529;
+}
+
+/* Lista de transacciones */
+#recent-transactions .border-bottom:last-child {
+    border-bottom: none !important;
+}
+
+/* DataTables */
+.dataTables_wrapper .dt-buttons {
+    margin-bottom: 15px;
+}
+
+.dataTables_wrapper .dataTables_filter input {
+    border-radius: 5px;
+}
+
+/* Badges */
+.badge {
+    padding: 6px 12px;
+    font-weight: 500;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card {
+    animation: fadeIn 0.5s ease;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+    .bar-label {
+        width: 80px;
+        font-size: 14px;
+    }
+
+    .bar-value {
+        font-size: 14px;
+    }
+
+    .mini-stats-card .icon-box {
+        font-size: 36px;
+    }
+}
+
+/* Botones personalizados */
+.btn {
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-weight: 500;
+}
+
+/* Formulario */
+.form-label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 8px;
+}
+
+.form-control,
+.form-select {
+    border-radius: 6px;
+    border: 1px solid #ced4da;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+/* Alerta de modo demo */
+.navbar .badge {
+    font-size: 0.875rem;
+    padding: 8px 12px;
+}
+
+/* Lista de navegación */
+.list-group-item {
+    border-left: 3px solid transparent;
+    transition: all 0.3s;
+}
+
+.list-group-item.active {
+    border-left-color: #fff;
+    background-color: #0d6efd;
+}
+
+.list-group-item:hover:not(.active) {
+    background-color: #f8f9fa;
+    border-left-color: #0d6efd;
+}

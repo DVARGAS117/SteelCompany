@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listado de Movimientos - Flujo de Caja | Prototipo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.bootstrap5.min.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+
+<body>
+    <nav class="navbar navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a href="index.html" class="navbar-brand mb-0 h1">
+                <i class="ri-money-dollar-circle-line"></i> Prototipo - Módulo Flujo de Caja
+            </a>
+            <span class="badge bg-warning text-dark">MODO DEMO</span>
+        </div>
+    </nav>
+
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="list-group">
+                    <a href="dashboard.html" class="list-group-item list-group-item-action">
+                        <i class="ri-dashboard-line"></i> Dashboard Financiero
+                    </a>
+                    <a href="registrar-movimiento.html" class="list-group-item list-group-item-action">
+                        <i class="ri-add-circle-line"></i> Registrar Movimiento
+                    </a>
+                    <a href="listado-movimientos.html" class="list-group-item list-group-item-action active">
+                        <i class="ri-list-check"></i> Listado de Movimientos
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-md-9">
+                <!-- Título de página -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="mb-0">Listado de Movimientos Financieros</h4>
+                    <a href="registrar-movimiento.html" class="btn btn-primary">
+                        <i class="ri-add-line"></i> Nuevo Movimiento
+                    </a>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table id="tabla-movimientos" class="table table-striped table-bordered nowrap"
+                                style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Tipo</th>
+                                        <th>Clasificación</th>
+                                        <th>RUC</th>
+                                        <th>Razón Social</th>
+                                        <th>Concepto</th>
+                                        <th>Categoría</th>
+                                        <th>Monto Total</th>
+                                        <th>Cuotas</th>
+                                        <th>Estado</th>
+                                        <th>Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbody-movimientos">
+                                    <!-- Datos cargados dinámicamente -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Ver Cuotas -->
+    <div class="modal fade" id="modalVerCuotas" tabindex="-1" aria-labelledby="modalVerCuotasLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalVerCuotasLabel">
+                        <i class="ri-list-check"></i> Cuotas del Movimiento
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="info-movimiento" class="mb-3"></div>
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Cuota</th>
+                                    <th>Fecha Vencimiento</th>
+                                    <th>Monto</th>
+                                    <th>Estado</th>
+                                    <th>Fecha Pago</th>
+                                    <th>Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody-cuotas">
+                                <!-- Cuotas cargadas dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.bootstrap5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+    <script src="assets/js/datos-temporales.js"></script>
+    <script src="assets/js/listado-movimientos.js"></script>
+</body>
+
+</html>
