@@ -156,11 +156,11 @@ require("config/inicializar-datos.php");
                                                         WHERE id_movimiento = $id_movimiento
                                                     ");
                                                     $estadoCuotas = mysqli_fetch_assoc($sqlCuotas);
-                                                    
+
                                                     $total_cuotas = $estadoCuotas['total_cuotas'];
                                                     $cuotas_pagadas = $estadoCuotas['cuotas_pagadas'];
                                                     $cuotas_pendientes = $estadoCuotas['cuotas_pendientes'];
-                                                    
+
                                                     // Determinar badge de estado de pago
                                                     if ($total_cuotas > 0) {
                                                         if ($cuotas_pagadas == $total_cuotas) {
@@ -403,8 +403,12 @@ require("config/inicializar-datos.php");
                 $('#datatable-buttons').DataTable().destroy();
             }
 
+            // Cargar el estado de columnas desde localStorage
+            var columnasGuardadas = localStorage.getItem('listadoMovimientos_columnasVisibles');
+            var columnasVisibles = columnasGuardadas ? JSON.parse(columnasGuardadas) : null;
+
             // Inicializar con configuración personalizada
-            $('#datatable-buttons').DataTable({
+            var table = $('#datatable-buttons').DataTable({
                 dom: 'Bfrtip',
                 buttons: [{
                         extend: 'colvis',
@@ -536,6 +540,25 @@ require("config/inicializar-datos.php");
                         orderable: false
                     } // Acción
                 ]
+            });
+
+            // Restaurar el estado de las columnas si existe
+            if (columnasVisibles) {
+                columnasVisibles.forEach(function(estado, index) {
+                    var column = table.column(index);
+                    if (column.visible() !== estado) {
+                        column.visible(estado);
+                    }
+                });
+            }
+
+            // Guardar el estado de las columnas cuando cambien
+            table.on('column-visibility.dt', function(e, settings, column, state) {
+                var columnasActuales = [];
+                table.columns().every(function(index) {
+                    columnasActuales.push(this.visible());
+                });
+                localStorage.setItem('listadoMovimientos_columnasVisibles', JSON.stringify(columnasActuales));
             });
         });
 
