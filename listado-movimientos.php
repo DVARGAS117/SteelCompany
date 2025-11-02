@@ -536,7 +536,7 @@ require("config/inicializar-datos.php");
                 },
                 success: function(response) {
                     if (response.success) {
-                        cargarInfoMovimiento(response.movimiento);
+                        cargarInfoMovimiento(response.movimiento, response.cuotas);
                         cargarCuotas(response.cuotas);
                         $('#modalCuotas').modal('show');
                     } else {
@@ -564,7 +564,7 @@ require("config/inicializar-datos.php");
         }
 
         // Función para cargar la información del movimiento principal
-        function cargarInfoMovimiento(movimiento) {
+        function cargarInfoMovimiento(movimiento, cuotas) {
             const badgeTipo = movimiento.tipo === 'INGRESO' ?
                 '<span class="badge bg-success">INGRESO</span>' :
                 '<span class="badge bg-danger">EGRESO</span>';
@@ -576,6 +576,17 @@ require("config/inicializar-datos.php");
             const rucDisplay = movimiento.ruc || 'N/A';
             const razonDisplay = movimiento.razon_social || 'N/A';
             const fecha = new Date(movimiento.fecha_primera_cuota).toLocaleDateString('es-PE');
+            
+            // Calcular monto pagado (suma de cuotas con estado PAGADA)
+            let montoPagado = 0;
+            if (cuotas && cuotas.length > 0) {
+                montoPagado = cuotas
+                    .filter(c => c.estado === 'PAGADA')
+                    .reduce((sum, c) => sum + parseFloat(c.monto_cuota), 0);
+            }
+            
+            const montoTotal = parseFloat(movimiento.monto_total);
+            const porcentajePagado = montoTotal > 0 ? ((montoPagado / montoTotal) * 100).toFixed(1) : 0;
 
             let html = `
                 <div class="col-md-6">
@@ -587,7 +598,9 @@ require("config/inicializar-datos.php");
                 <div class="col-md-6">
                     <p><strong>Concepto:</strong> ${movimiento.concepto}</p>
                     <p><strong>Categoría:</strong> ${movimiento.categoria.replace(/_/g, ' ')}</p>
-                    <p><strong>Monto Total:</strong> <span class="text-primary fw-bold">S/ ${parseFloat(movimiento.monto_total).toFixed(2)}</span></p>
+                    <p><strong>Monto Total Compromiso:</strong> <span class="text-primary fw-bold">S/ ${montoTotal.toFixed(2)}</span></p>
+                    <p><strong>Monto Pagado:</strong> <span class="text-success fw-bold">S/ ${montoPagado.toFixed(2)}</span> 
+                       <small class="text-muted">(${porcentajePagado}%)</small></p>
                     <p><strong>Fecha Inicial:</strong> ${fecha}</p>
                 </div>
             `;

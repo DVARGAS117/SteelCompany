@@ -123,9 +123,19 @@ switch ($accion) {
                       WHERE id_cuota = $id_cuota";
 
         if (mysqli_query($conexion, $sqlUpdate)) {
+            // Recalcular el monto total del movimiento basado en cuotas pagadas
+            $sqlSumaPagadas = "SELECT SUM(monto_cuota) as total_pagado 
+                              FROM cuotas_movimientos 
+                              WHERE id_movimiento = $id_movimiento 
+                              AND estado = 'PAGADA'";
+            $resultSuma = mysqli_query($conexion, $sqlSumaPagadas);
+            $suma = mysqli_fetch_assoc($resultSuma);
+            $monto_pagado = $suma['total_pagado'] ?? 0;
+            
             echo json_encode([
                 'success' => true,
-                'message' => 'Cuota marcada como pagada correctamente'
+                'message' => 'Cuota marcada como pagada correctamente',
+                'monto_pagado' => $monto_pagado
             ]);
         } else {
             echo json_encode([
@@ -157,9 +167,19 @@ switch ($accion) {
                       WHERE id_cuota = $id_cuota";
 
         if (mysqli_query($conexion, $sqlUpdate)) {
+            // Recalcular el monto total del movimiento basado en cuotas pagadas
+            $sqlSumaPagadas = "SELECT SUM(monto_cuota) as total_pagado 
+                              FROM cuotas_movimientos 
+                              WHERE id_movimiento = $id_movimiento 
+                              AND estado = 'PAGADA'";
+            $resultSuma = mysqli_query($conexion, $sqlSumaPagadas);
+            $suma = mysqli_fetch_assoc($resultSuma);
+            $monto_pagado = $suma['total_pagado'] ?? 0;
+            
             echo json_encode([
                 'success' => true,
-                'message' => 'Cuota revertida a estado ' . $estado_nuevo . ' correctamente'
+                'message' => 'Cuota revertida a estado ' . $estado_nuevo . ' correctamente',
+                'monto_pagado' => $monto_pagado
             ]);
         } else {
             echo json_encode([
