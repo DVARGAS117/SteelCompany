@@ -17,6 +17,9 @@ require("config/inicializar-datos.php");
     <!-- Responsive datatable examples -->
     <link href="assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
 
+    <!-- SweetAlert2 -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+
     <!-- Bootstrap Css -->
     <link href="assets/css/bootstrap.min.css" id="bootstrap-style" rel="stylesheet" type="text/css" />
     <!-- Icons Css -->
@@ -205,33 +208,96 @@ require("config/inicializar-datos.php");
 
         <!-- End Page-content -->
 
-        <!-- Modal -->
-
-        <div class="modal fade bs-example-modal-xl" id="bs-example-modal-xl" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
-
+        <!-- Modal para ver cuotas -->
+        <div class="modal fade" id="modalCuotas" tabindex="-1" role="dialog" aria-labelledby="modalCuotasLabel" aria-hidden="true">
             <div class="modal-dialog modal-xl">
-
                 <div class="modal-content">
-
-                    <div class="modal-header">
-
-                        <h5 class="modal-title" id="myExtraLargeModalLabel">MODAL</h5>
-
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title" id="modalCuotasLabel">
+                            <i class="ri-list-check align-middle me-2"></i>Detalle de Cuotas del Movimiento
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-
                     <div class="modal-body">
+                        <!-- Información del movimiento principal -->
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h5 class="card-title mb-3">Información del Movimiento</h5>
+                                <div class="row" id="infoMovimiento">
+                                    <!-- Se llenará dinámicamente con JavaScript -->
+                                </div>
+                            </div>
+                        </div>
 
-                        <p>...</p>
-
+                        <!-- Tabla de cuotas -->
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title mb-3">Listado de Cuotas</h5>
+                                <div class="table-responsive">
+                                    <table class="table table-hover table-bordered" id="tablaCuotas">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th width="8%">N° Cuota</th>
+                                                <th width="15%">Monto</th>
+                                                <th width="15%">Fecha Vencimiento</th>
+                                                <th width="15%">Fecha Pago</th>
+                                                <th width="12%">Estado</th>
+                                                <th width="35%">Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="cuotasBody">
+                                            <!-- Se llenará dinámicamente con JavaScript -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-                </div><!-- /.modal-content -->
-
-            </div><!-- /.modal-dialog -->
-
-        </div><!-- /.modal -->
+        <!-- Modal para editar monto de cuota -->
+        <div class="modal fade" id="modalEditarCuota" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-warning">
+                        <h5 class="modal-title">
+                            <i class="ri-edit-line align-middle me-2"></i>Editar Monto de Cuota
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-warning" role="alert">
+                            <i class="ri-alert-line align-middle me-2"></i>
+                            <strong>Advertencia:</strong> Al modificar el monto de esta cuota, el monto total del movimiento será recalculado automáticamente.
+                        </div>
+                        <input type="hidden" id="editarIdCuota">
+                        <div class="mb-3">
+                            <label for="editarMontoCuota" class="form-label">Nuevo Monto de la Cuota</label>
+                            <div class="input-group">
+                                <span class="input-group-text">S/</span>
+                                <input type="number" class="form-control" id="editarMontoCuota" step="0.01" min="0.01" required>
+                            </div>
+                            <div class="form-text">Ingrese el nuevo monto para esta cuota</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Monto Actual:</label>
+                            <p class="fw-bold" id="montoActualCuota">S/ 0.00</p>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-warning" onclick="confirmarEditarCuota()">
+                            <i class="ri-save-line align-middle me-2"></i>Guardar Cambios
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- ============================================================== -->
 
@@ -259,7 +325,8 @@ require("config/inicializar-datos.php");
 
     <script src="assets/libs/node-waves/waves.min.js"></script>
 
-
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- Required datatable js -->
 
@@ -447,10 +514,384 @@ require("config/inicializar-datos.php");
             });
         });
 
+        // Variable global para almacenar el ID del movimiento actual
+        let movimientoActualId = null;
+
         // Función para ver cuotas de un movimiento
         function verCuotas(id_movimiento) {
-            // Aquí se podría abrir un modal con las cuotas
-            alert('Funcionalidad de ver cuotas en desarrollo. ID: ' + id_movimiento);
+            movimientoActualId = id_movimiento;
+            
+            // Realizar petición AJAX para obtener las cuotas
+            $.ajax({
+                url: 'ajax/obtener-cuotas-movimiento.php',
+                type: 'POST',
+                data: { id_movimiento: id_movimiento },
+                dataType: 'json',
+                beforeSend: function() {
+                    // Mostrar loading
+                    $('#infoMovimiento').html('<div class="text-center"><div class="spinner-border" role="status"><span class="visually-hidden">Cargando...</span></div></div>');
+                    $('#cuotasBody').html('<tr><td colspan="6" class="text-center"><div class="spinner-border" role="status"><span class="visually-hidden">Cargando...</span></div></td></tr>');
+                },
+                success: function(response) {
+                    if (response.success) {
+                        cargarInfoMovimiento(response.movimiento);
+                        cargarCuotas(response.cuotas);
+                        $('#modalCuotas').modal('show');
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: response.message || 'No se pudo cargar la información del movimiento'
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Error al cargar las cuotas. Por favor, intente nuevamente.'
+                    });
+                }
+            });
+        }
+
+        // Función para cargar la información del movimiento principal
+        function cargarInfoMovimiento(movimiento) {
+            const badgeTipo = movimiento.tipo === 'INGRESO' 
+                ? '<span class="badge bg-success">INGRESO</span>' 
+                : '<span class="badge bg-danger">EGRESO</span>';
+            
+            const badgeClasif = movimiento.clasificacion === 'EMPRESARIAL'
+                ? '<span class="badge bg-primary">EMPRESARIAL</span>'
+                : '<span class="badge bg-info">PERSONAL</span>';
+            
+            const rucDisplay = movimiento.ruc || 'N/A';
+            const razonDisplay = movimiento.razon_social || 'N/A';
+            const fecha = new Date(movimiento.fecha_primera_cuota).toLocaleDateString('es-PE');
+            
+            let html = `
+                <div class="col-md-6">
+                    <p><strong>Tipo:</strong> ${badgeTipo}</p>
+                    <p><strong>Clasificación:</strong> ${badgeClasif}</p>
+                    <p><strong>RUC:</strong> ${rucDisplay}</p>
+                    <p><strong>Razón Social:</strong> ${razonDisplay}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Concepto:</strong> ${movimiento.concepto}</p>
+                    <p><strong>Categoría:</strong> ${movimiento.categoria.replace(/_/g, ' ')}</p>
+                    <p><strong>Monto Total:</strong> <span class="text-primary fw-bold">S/ ${parseFloat(movimiento.monto_total).toFixed(2)}</span></p>
+                    <p><strong>Fecha Inicial:</strong> ${fecha}</p>
+                </div>
+            `;
+            
+            $('#infoMovimiento').html(html);
+        }
+
+        // Función para cargar las cuotas en la tabla
+        function cargarCuotas(cuotas) {
+            if (cuotas.length === 0) {
+                $('#cuotasBody').html('<tr><td colspan="6" class="text-center">No hay cuotas registradas</td></tr>');
+                return;
+            }
+            
+            let html = '';
+            cuotas.forEach(function(cuota) {
+                const fechaVenc = new Date(cuota.fecha_vencimiento).toLocaleDateString('es-PE');
+                const fechaPago = cuota.fecha_pago ? new Date(cuota.fecha_pago).toLocaleDateString('es-PE') : '-';
+                
+                let badgeEstado = '';
+                switch(cuota.estado) {
+                    case 'PAGADA':
+                        badgeEstado = '<span class="badge bg-success">PAGADA</span>';
+                        break;
+                    case 'VENCIDA':
+                        badgeEstado = '<span class="badge bg-danger">VENCIDA</span>';
+                        break;
+                    case 'PENDIENTE':
+                        badgeEstado = '<span class="badge bg-warning">PENDIENTE</span>';
+                        break;
+                }
+                
+                // Botones de acción según el estado
+                let botones = '';
+                
+                // Botón editar (siempre disponible)
+                botones += `<button type="button" class="btn btn-sm btn-warning" onclick="abrirModalEditarCuota(${cuota.id_cuota}, ${cuota.monto_cuota})" title="Editar Monto">
+                    <i class="ri-edit-line"></i> Editar
+                </button> `;
+                
+                // Botón pagar (solo si no está pagada)
+                if (cuota.estado !== 'PAGADA') {
+                    botones += `<button type="button" class="btn btn-sm btn-success" onclick="pagarCuota(${cuota.id_cuota})" title="Marcar como Pagada">
+                        <i class="ri-money-dollar-circle-line"></i> Pagar
+                    </button> `;
+                }
+                
+                // Botón revertir (solo si está pagada)
+                if (cuota.estado === 'PAGADA') {
+                    botones += `<button type="button" class="btn btn-sm btn-info" onclick="revertirCuota(${cuota.id_cuota})" title="Revertir a Pendiente">
+                        <i class="ri-arrow-go-back-line"></i> Revertir
+                    </button> `;
+                }
+                
+                // Botón eliminar (siempre disponible)
+                botones += `<button type="button" class="btn btn-sm btn-danger" onclick="eliminarCuota(${cuota.id_cuota})" title="Eliminar Cuota">
+                    <i class="ri-delete-bin-line"></i> Eliminar
+                </button>`;
+                
+                html += `
+                    <tr>
+                        <td class="text-center">${cuota.numero_cuota}</td>
+                        <td>S/ ${parseFloat(cuota.monto_cuota).toFixed(2)}</td>
+                        <td>${fechaVenc}</td>
+                        <td>${fechaPago}</td>
+                        <td>${badgeEstado}</td>
+                        <td>${botones}</td>
+                    </tr>
+                `;
+            });
+            
+            $('#cuotasBody').html(html);
+        }
+
+        // Función para abrir modal de edición de cuota
+        function abrirModalEditarCuota(idCuota, montoActual) {
+            $('#editarIdCuota').val(idCuota);
+            $('#editarMontoCuota').val(montoActual);
+            $('#montoActualCuota').text('S/ ' + parseFloat(montoActual).toFixed(2));
+            $('#modalEditarCuota').modal('show');
+        }
+
+        // Función para confirmar edición de cuota
+        function confirmarEditarCuota() {
+            const idCuota = $('#editarIdCuota').val();
+            const nuevoMonto = parseFloat($('#editarMontoCuota').val());
+            
+            if (!nuevoMonto || nuevoMonto <= 0) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Monto inválido',
+                    text: 'Por favor, ingrese un monto válido mayor a cero'
+                });
+                return;
+            }
+            
+            Swal.fire({
+                title: '¿Confirmar cambio de monto?',
+                html: `Al modificar el monto de esta cuota, el <strong>monto total del movimiento será recalculado</strong>.<br><br>¿Desea continuar?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, continuar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    editarCuota(idCuota, nuevoMonto);
+                }
+            });
+        }
+
+        // Función para editar monto de cuota
+        function editarCuota(idCuota, nuevoMonto) {
+            $.ajax({
+                url: 'ajax/gestionar-cuota.php',
+                type: 'POST',
+                data: {
+                    accion: 'editar',
+                    id_cuota: idCuota,
+                    nuevo_monto: nuevoMonto
+                },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        $('#modalEditarCuota').modal('hide');
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Éxito',
+                            text: response.message,
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                        // Recargar las cuotas
+                        verCuotas(movimientoActualId);
+                        // Actualizar la tabla principal
+                        setTimeout(() => location.reload(), 2100);
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: response.message
+                        });
+                    }
+                },
+                error: function() {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Error al procesar la solicitud'
+                    });
+                }
+            });
+        }
+
+        // Función para marcar cuota como pagada
+        function pagarCuota(idCuota) {
+            Swal.fire({
+                title: '¿Marcar como pagada?',
+                text: 'Esta acción marcará la cuota como pagada con la fecha actual.',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Sí, marcar como pagada',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: 'ajax/gestionar-cuota.php',
+                        type: 'POST',
+                        data: {
+                            accion: 'pagar',
+                            id_cuota: idCuota
+                        },
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.success) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Éxito',
+                                    text: response.message,
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                });
+                                // Recargar las cuotas
+                                verCuotas(movimientoActualId);
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: response.message
+                                });
+                            }
+                        },
+                        error: function() {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Error al procesar la solicitud'
+                            });
+                        }
+                    });
+                }
+            });
+        }
+
+        // Función para revertir cuota pagada
+        function revertirCuota(idCuota) {
+            Swal.fire({
+                title: '¿Revertir pago?',
+                text: 'Esta acción marcará la cuota nuevamente como pendiente o vencida según su fecha.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#17a2b8',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Sí, revertir',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: 'ajax/gestionar-cuota.php',
+                        type: 'POST',
+                        data: {
+                            accion: 'revertir',
+                            id_cuota: idCuota
+                        },
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.success) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Éxito',
+                                    text: response.message,
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                });
+                                // Recargar las cuotas
+                                verCuotas(movimientoActualId);
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: response.message
+                                });
+                            }
+                        },
+                        error: function() {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Error al procesar la solicitud'
+                            });
+                        }
+                    });
+                }
+            });
+        }
+
+        // Función para eliminar cuota
+        function eliminarCuota(idCuota) {
+            Swal.fire({
+                title: '¿Eliminar cuota?',
+                html: 'Al eliminar esta cuota:<br>- El número total de cuotas se reducirá<br>- El monto total del movimiento será recalculado<br><br>¿Desea continuar?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: 'ajax/gestionar-cuota.php',
+                        type: 'POST',
+                        data: {
+                            accion: 'eliminar',
+                            id_cuota: idCuota
+                        },
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.success) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Éxito',
+                                    text: response.message,
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                });
+                                // Recargar las cuotas
+                                verCuotas(movimientoActualId);
+                                // Actualizar la tabla principal
+                                setTimeout(() => location.reload(), 2100);
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: response.message
+                                });
+                            }
+                        },
+                        error: function() {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Error al procesar la solicitud'
+                            });
+                        }
+                    });
+                }
+            });
         }
 
         // Script para eliminar registro (comentado para evitar eliminaciones accidentales)
