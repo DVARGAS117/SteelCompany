@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Flujo de Caja | Prototipo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+
+<body>
+    <nav class="navbar navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a href="index.html" class="navbar-brand mb-0 h1">
+                <i class="ri-money-dollar-circle-line"></i> Prototipo - Módulo Flujo de Caja
+            </a>
+            <span class="badge bg-warning text-dark">MODO DEMO</span>
+        </div>
+    </nav>
+
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="list-group">
+                    <a href="dashboard.html" class="list-group-item list-group-item-action active">
+                        <i class="ri-dashboard-line"></i> Dashboard Financiero
+                    </a>
+                    <a href="registrar-movimiento.html" class="list-group-item list-group-item-action">
+                        <i class="ri-add-circle-line"></i> Registrar Movimiento
+                    </a>
+                    <a href="listado-movimientos.html" class="list-group-item list-group-item-action">
+                        <i class="ri-list-check"></i> Listado de Movimientos
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-md-9">
+                <!-- Título de página -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="mb-0">Dashboard - Flujo de Caja</h4>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb mb-0">
+                            <li class="breadcrumb-item"><a href="index.html">Inicio</a></li>
+                            <li class="breadcrumb-item active">Flujo de Caja</li>
+                        </ol>
+                    </nav>
+                </div>
+
+                <!-- Filtros -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="cuenta-filter" class="form-label">Cuenta:</label>
+                        <select id="cuenta-filter" class="form-select">
+                            <option value="todas">Todas las Cuentas</option>
+                            <option value="EMPRESARIAL">Solo Empresarial</option>
+                            <option value="PERSONAL">Solo Personal</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="mes-filter" class="form-label">Mes:</label>
+                        <select id="mes-filter" class="form-select">
+                            <option value="2025-10" selected>Octubre 2025</option>
+                            <option value="2025-09">Septiembre 2025</option>
+                            <option value="2025-08">Agosto 2025</option>
+                            <option value="2025-07">Julio 2025</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Tarjetas de resumen -->
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card mini-stats-card bg-primary text-white">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-grow-1">
+                                        <p class="mb-1 opacity-75">Ingresos Totales</p>
+                                        <h4 class="mb-0" id="total-ingresos">S/ 0.00</h4>
+                                    </div>
+                                    <div class="icon-box">
+                                        <i class="ri-arrow-down-circle-line"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card mini-stats-card bg-danger text-white">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-grow-1">
+                                        <p class="mb-1 opacity-75">Egresos Totales</p>
+                                        <h4 class="mb-0" id="total-egresos">S/ 0.00</h4>
+                                    </div>
+                                    <div class="icon-box">
+                                        <i class="ri-arrow-up-circle-line"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card mini-stats-card bg-success text-white">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-grow-1">
+                                        <p class="mb-1 opacity-75">Saldo Neto</p>
+                                        <h4 class="mb-0" id="saldo-neto">S/ 0.00</h4>
+                                    </div>
+                                    <div class="icon-box">
+                                        <i class="ri-wallet-line"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gráfico y últimas transacciones -->
+                <div class="row mt-4">
+                    <div class="col-xl-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title mb-4">Desglose por Clasificación</h5>
+                                <div class="bar-chart">
+                                    <div class="bar-item">
+                                        <span class="bar-label">Empresarial</span>
+                                        <div class="bar-wrapper">
+                                            <div class="bar bar-empresarial" id="bar-empresarial"></div>
+                                        </div>
+                                        <span class="bar-value" id="val-empresarial">S/ 0.00</span>
+                                    </div>
+                                    <div class="bar-item">
+                                        <span class="bar-label">Personal</span>
+                                        <div class="bar-wrapper">
+                                            <div class="bar bar-personal" id="bar-personal"></div>
+                                        </div>
+                                        <span class="bar-value" id="val-personal">S/ 0.00</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title mb-4">Últimas Transacciones</h5>
+                                <div id="recent-transactions" style="max-height: 300px; overflow-y: auto;">
+                                    <p class="text-muted text-center">Cargando...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cuotas Pendientes -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title mb-4">Cuotas Pendientes - Próximos Pagos/Cobros</h5>
+                                <div id="cuotas-pendientes">
+                                    <p class="text-muted text-center">Cargando cuotas...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/datos-temporales.js"></script>
+    <script src="assets/js/dashboard.js"></script>
+</body>
+
+</html>

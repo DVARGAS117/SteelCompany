@@ -2715,9 +2715,13 @@ if ($modulo == 'MovimientosFinancieros') {
         $razon_social = $_POST['razon_social'];
         $concepto = $_POST['concepto'];
         $monto_total = $_POST['monto_total'];
-        $numero_cuotas = $_POST['numero_cuotas'];
-        $frecuencia_cuotas = $_POST['frecuencia_cuotas'];
-        $fecha_primera_cuota = $_POST['fecha_primera_cuota'];
+        $numero_cuotas = isset($_POST['numero_cuotas']) && $_POST['numero_cuotas'] !== '' ? $_POST['numero_cuotas'] : 1;
+        $frecuencia_cuotas = isset($_POST['frecuencia_cuotas']) && $_POST['frecuencia_cuotas'] !== '' ? $_POST['frecuencia_cuotas'] : 'UNICO';
+
+        // CORREGIDO: Asegurar formato correcto de fecha (YYYY-MM-DD)
+        $fecha_primera_cuota_raw = $_POST['fecha_primera_cuota'];
+        $fecha_primera_cuota = date('Y-m-d', strtotime($fecha_primera_cuota_raw));
+
         $categoria = $_POST['categoria'];
         $numero_resolucion = $_POST['numero_resolucion'];
         $notas = $_POST['notas'];
@@ -2746,9 +2750,9 @@ if ($modulo == 'MovimientosFinancieros') {
 
                 for ($i = 1; $i <= $numero_cuotas; $i++) {
                     $sqlCuota = "INSERT INTO cuotas_movimientos (
-                        id_movimiento, numero_cuota, monto_cuota, fecha_vencimiento, estado
+                        id_movimiento, numero_cuota, monto_cuota, fecha_vencimiento, estado, fecha_creacion, cod_personal
                     ) VALUES (
-                        '$id_movimiento', '$i', '$monto_cuota', '$fecha_cuota', 'PENDIENTE'
+                        '$id_movimiento', '$i', '$monto_cuota', '$fecha_cuota', 'PENDIENTE', '$fecha_creacion', '$cod_personal'
                     )";
                     mysqli_query($conexion, $sqlCuota);
 
@@ -2758,9 +2762,9 @@ if ($modulo == 'MovimientosFinancieros') {
             } else {
                 // Una sola cuota
                 $sqlCuota = "INSERT INTO cuotas_movimientos (
-                    id_movimiento, numero_cuota, monto_cuota, fecha_vencimiento, estado
+                    id_movimiento, numero_cuota, monto_cuota, fecha_vencimiento, estado, fecha_creacion, cod_personal
                 ) VALUES (
-                    '$id_movimiento', '1', '$monto_total', '$fecha_primera_cuota', 'PENDIENTE'
+                    '$id_movimiento', '1', '$monto_total', '$fecha_primera_cuota', 'PENDIENTE', '$fecha_creacion', '$cod_personal'
                 )";
                 mysqli_query($conexion, $sqlCuota);
             }
@@ -2784,23 +2788,27 @@ if ($modulo == 'MovimientosFinancieros') {
 // Función auxiliar para calcular fechas de cuotas
 function calcularSiguienteFecha($fecha_actual, $frecuencia)
 {
-    $fecha = new DateTime($fecha_actual);
+    // Asegurar que la fecha esté en formato correcto
+    $timestamp = strtotime($fecha_actual);
 
     switch ($frecuencia) {
         case 'MENSUAL':
-            $fecha->modify('+1 month');
+            $timestamp = strtotime('+1 month', $timestamp);
             break;
         case 'QUINCENAL':
-            $fecha->modify('+15 days');
+            $timestamp = strtotime('+15 days', $timestamp);
             break;
         case 'SEMANAL':
-            $fecha->modify('+7 days');
+            $timestamp = strtotime('+7 days', $timestamp);
             break;
         case 'PERSONALIZADO':
             // Por defecto mensual
-            $fecha->modify('+1 month');
+            $timestamp = strtotime('+1 month', $timestamp);
+            break;
+        default:
+            $timestamp = strtotime('+1 month', $timestamp);
             break;
     }
 
-    return $fecha->format('Y-m-d');
+    return date('Y-m-d', $timestamp);
 }
